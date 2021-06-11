@@ -88,22 +88,25 @@ def dibujar():
                          'S':False,'F':False, 'k':False, 'n':False,'h':0,'Obj':False}
     params_mono[(12, 3)] = {'V': False, 'O': False, 'I': False, 'X': False, 
                       'S':False,'F':True, 'k':False, 'n':False,'h':0,'Obj':False}
-    params_mono[(6, 7)]['Obj'] = True
+    params_mono[(3, 14)]['Obj'] = True
+
     
     params_pulpo[(9, 1)] = {'V': False, 'O': False, 'I': True, 'X': False,
                          'S':False,'F':False, 'k':False, 'n':False,'h':0,'Obj':False}
     params_pulpo[(12, 3)] = {'V': False, 'O': False, 'I': False, 'X': False, 
                       'S':False,'F':True, 'k':False, 'n':False,'h':0,'Obj':False}
-    params_pulpo[(2, 14)]['Obj'] = True
+    params_pulpo[(6, 7)]['Obj'] = True
     
     objetivos_humano.append((14,13))
     objetivos_humano.append((12,3))
-    objetivos_mono.append((6,7))
-    objetivos_mono.append((12,3))    
-    objetivos_pulpo.append((2,14))
+
+    objetivos_mono.append((3,14))
+    objetivos_mono.append((12,3)) 
+
+
+    objetivos_pulpo.append((6,7))
     objetivos_pulpo.append((12,3))
     
-
 
     humano=ag.Agente(1)
     mono = ag.Agente(3)
@@ -181,29 +184,36 @@ def dibujar():
                     if(lista_params_m['Obj']):
                         X = Fuente.render('T', lista_params_m['Obj'], BLACK)
                         pantalla.blit(X, [j+15, i+15])
+
                     if(lista_params_p['Obj']):
                         X = Fuente.render('S', lista_params_p['Obj'], BLACK)
                         pantalla.blit(X, [j+15, i+15])
                     if (lista_params_h['F']):
                         X = Fuente.render('P', lista_params_h['F'], BLACK)
                         pantalla.blit(X, [j+15, i+15])
-                    if (lista_params_h['X'] and lista_params_m['X'] and 
-                        lista_params_p['X'] and lista_params_h['F'] and contf == 2):
+                    if (lista_params_h['X'] and lista_params_h['F'] and lista_params_m['X'] 
+                    	and lista_params_m['F'] and lista_params_p['F'] and lista_params_p['X'] and contf == 2):
                         gameOver=True
                         print("Ha llegado a su objetivo!!!")
                         time.sleep(10)
-                    elif (lista_params_h['X'] and lista_params_m['X'] and 
-                        lista_params_p['X'] and lista_params_h['F']):
+                    elif (lista_params_h['X'] and lista_params_h['F'] and lista_params_m['X'] 
+                    	and lista_params_m['F'] and lista_params_p['F'] and lista_params_p['X']):
+
                         contf += 1
                     if lista_params_h['X'] and lista_params_h['Obj']:
                         objetivos_humano.pop(0)
                         lista_params_h['Obj']=False
+                        reiniciar(params_humano,fil,col)
+
                     if lista_params_m['X'] and lista_params_m['Obj']:
                         objetivos_mono.pop(0)
                         lista_params_m['Obj']=False
+                        reiniciar(params_mono,fil,col)
                     if lista_params_p['X'] and lista_params_p['Obj']:
                         objetivos_pulpo.pop(0)
                         lista_params_p['Obj']=False
+                        reiniciar(params_pulpo,fil,col)
+
                     columna = columna+1
 
 
@@ -227,4 +237,13 @@ def dibujar():
         
         reloj.tick(1)
     pygame.quit()
-    print("Costo acumulado: "+str(costoAcumulado))
+
+def reiniciar(parametros, fil, col):
+	for i in range(0, fil):
+		for j in range(0, col):
+			parametros[(i, j)]['V'] = False
+			parametros[(i, j)]['S'] = False
+			parametros[(i, j)]['O'] = False
+			parametros[(i, j)]['k'] = False
+			parametros[(i, j)]['n'] = False
+			parametros[(i, j)]['h'] = False

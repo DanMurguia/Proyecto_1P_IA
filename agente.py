@@ -11,6 +11,7 @@ class Agente:
         self.ente = self.definir_agente(agente)
         self.root = None
         self.lista = [] 
+        self.costoTotal=0
         
     def definir_agente(self, agente):
         if agente==1:
@@ -473,7 +474,7 @@ class Agente:
         nodoaux = None
         evaluacion_auxiliar=0
         paramsd[self.nodo_act.data]['V'] = True
-        if not paramsd[self.nodo_act.data]['F']:
+        if not paramsd[self.nodo_act.data]['F'] or len(lista_obj)>1:
             print(paramsd[self.nodo_act.data],self.nodo_act.data)
             if not paramsd[self.nodo_act.data]['k']:
                 for nodo in self.nodo_act.hijos:
