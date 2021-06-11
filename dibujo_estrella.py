@@ -89,6 +89,7 @@ def dibujar():
     params_mono[(12, 3)] = {'V': False, 'O': False, 'I': False, 'X': False, 
                       'S':False,'F':True, 'k':False, 'n':False,'h':0,'Obj':False}
     params_mono[(3, 14)]['Obj'] = True
+
     
     params_pulpo[(9, 1)] = {'V': False, 'O': False, 'I': True, 'X': False,
                          'S':False,'F':False, 'k':False, 'n':False,'h':0,'Obj':False}
@@ -102,10 +103,10 @@ def dibujar():
     objetivos_mono.append((3,14))
     objetivos_mono.append((12,3)) 
 
+
     objetivos_pulpo.append((6,7))
     objetivos_pulpo.append((12,3))
     
-
 
     humano=ag.Agente(1)
     mono = ag.Agente(3)
@@ -183,6 +184,7 @@ def dibujar():
                     if(lista_params_m['Obj']):
                         X = Fuente.render('T', lista_params_m['Obj'], BLACK)
                         pantalla.blit(X, [j+15, i+15])
+
                     if(lista_params_p['Obj']):
                         X = Fuente.render('S', lista_params_p['Obj'], BLACK)
                         pantalla.blit(X, [j+15, i+15])
@@ -196,6 +198,7 @@ def dibujar():
                         time.sleep(10)
                     elif (lista_params_h['X'] and lista_params_h['F'] and lista_params_m['X'] 
                     	and lista_params_m['F'] and lista_params_p['F'] and lista_params_p['X']):
+
                         contf += 1
                     if lista_params_h['X'] and lista_params_h['Obj']:
                         objetivos_humano.pop(0)
@@ -210,6 +213,7 @@ def dibujar():
                         objetivos_pulpo.pop(0)
                         lista_params_p['Obj']=False
                         reiniciar(params_pulpo,fil,col)
+
                     columna = columna+1
 
 
