@@ -30,19 +30,13 @@ columna = 0
     if algoritmo == 3:
         dibujar_estrella(agente,xinicial,yinicial,xfinal,yfinal)'''
 
-def dibujar(parametros_iniciales):
-    agente=parametros_iniciales['ente']
-    modo=parametros_iniciales['modo']
-    j_inicial=parametros_iniciales['j_inicial']
-    i_inicial=parametros_iniciales['i_inicial']
-    j_final=parametros_iniciales['j_final']
-    i_final=parametros_iniciales['i_final']
-    print("Agente"+str(agente))
-    print("Modo"+str(modo))
+def dibujar():
     pygame.init()
     costo=0
     costoAcumulado=0
-    lista=[]
+    objetivos_humano =[]
+    objetivos_mono =[]
+    objetivos_pulpo =[]
     contf = 0
 
     # tamañoPantalla es el una tupla con los valores del tamaño de la pantalla
@@ -63,26 +57,64 @@ def dibujar(parametros_iniciales):
 
     # Fuente es un estilo de imagen inicializada dentro de pygame. Pygame solo muestra imagenes o dibujos, no texto.
     Fuente = pygame.font.SysFont('fontname', 16)
-    matriz = gm.cargar_matriz('laberinto.txt')
+    matriz = gm.cargar_matriz('mapa_proyecto.txt')
     fil = matriz.shape[0]
     col = matriz.shape[1]
-    paramsd = {}             #Se crea el diccionario de parametros
+    params_humano = {}           #Se crea el diccionario de parametros
+    params_mono = {}
+    params_pulpo = {}
 
 
     for i in range(0, fil):
         for j in range(0, col):
-            paramsd[(i, j)] = {'V': False, 'O': False, 'I': False, 'X': False,
-                               'S':False, 'F':False, 'k':False, 'n':False, 'h':0}
-
-    paramsd[(i_inicial, j_inicial)] = {'V': False, 'O': False, 'I': True, 'X': False,
-                         'S':False,'F':False, 'k':False, 'n':False,'h':0}
-    paramsd[(i_final, j_final)] = {'V': False, 'O': False, 'I': False, 'X': False, 
-                      'S':False,'F':True, 'k':False, 'n':False,'h':0}
-
-
-    agente=ag.Agente(agente)
+            params_humano[(i, j)] = {'V': False, 'O': False, 'I': False, 'X': False,
+                               'S':False, 'F':False, 'k':False, 'n':False, 'h':0,'Obj':False}
+            
+            params_mono[(i, j)] = {'V': False, 'O': False, 'I': False, 'X': False,
+                               'S':False, 'F':False, 'k':False, 'n':False, 'h':0,'Obj':False}
+            
+            params_pulpo[(i, j)] = {'V': False, 'O': False, 'I': False, 'X': False,
+                               'S':False, 'F':False, 'k':False, 'n':False, 'h':0,'Obj':False}
+            
+            
+            
+    params_humano[(13, 2)] = {'V': False, 'O': False, 'I': True, 'X': False,
+                         'S':False,'F':False, 'k':False, 'n':False,'h':0,'Obj':False}
+    params_humano[(12, 3)] = {'V': False, 'O': False, 'I': False, 'X': False, 
+                      'S':False,'F':True, 'k':False, 'n':False,'h':0,'Obj':False}
+    params_humano[(14, 13)]['Obj'] = True
     
-    agente.spawn(paramsd, matriz)
+    params_mono[(13, 4)] = {'V': False, 'O': False, 'I': True, 'X': False,
+                         'S':False,'F':False, 'k':False, 'n':False,'h':0,'Obj':False}
+    params_mono[(12, 3)] = {'V': False, 'O': False, 'I': False, 'X': False, 
+                      'S':False,'F':True, 'k':False, 'n':False,'h':0,'Obj':False}
+    params_mono[(3, 14)]['Obj'] = True
+    
+    params_pulpo[(9, 1)] = {'V': False, 'O': False, 'I': True, 'X': False,
+                         'S':False,'F':False, 'k':False, 'n':False,'h':0,'Obj':False}
+    params_pulpo[(12, 3)] = {'V': False, 'O': False, 'I': False, 'X': False, 
+                      'S':False,'F':True, 'k':False, 'n':False,'h':0,'Obj':False}
+    params_pulpo[(6, 7)]['Obj'] = True
+    
+    objetivos_humano.append((14,13))
+    objetivos_humano.append((12,3))
+
+    objetivos_mono.append((3,14))
+    objetivos_mono.append((12,3)) 
+
+    objetivos_pulpo.append((6,7))
+    objetivos_pulpo.append((12,3))
+    
+
+
+    humano=ag.Agente(1)
+    mono = ag.Agente(3)
+    pulpo = ag.Agente(2)
+    
+    humano.spawn(params_humano, matriz)
+    mono.spawn(params_mono, matriz)
+    pulpo.spawn(params_pulpo, matriz)
+    
        
     while not gameOver:
             
@@ -91,7 +123,11 @@ def dibujar(parametros_iniciales):
         T = 0
         #fila es la fila que se va a recorrer de la matriz :V 
         fila = 0
-        agente.sense_estrella(paramsd,matriz,i_final,j_final)
+
+        humano.sense_estrella(params_humano,matriz,objetivos_humano[0][0],objetivos_humano[0][1])
+        mono.sense_estrella(params_mono,matriz,objetivos_mono[0][0],objetivos_mono[0][1])
+        pulpo.sense_estrella(params_pulpo,matriz,objetivos_pulpo[0][0],objetivos_pulpo[0][1])
+        
         # este for recorre el ancho de la pantalla
         for i in range(1, tamañoPantalla[0], 40):
             linea = matriz[fila] #se obtiene una fila de la matriz
@@ -101,58 +137,82 @@ def dibujar(parametros_iniciales):
                 # este for recorre el alto de la pantalla
                 for j in range(1, tamañoPantalla[1], 40):
 
-                    lista_params = paramsd[(fila-1, columna)]
+                    lista_params_h = params_humano[(fila-1, columna)]
+                    lista_params_m = params_mono[(fila-1, columna)]
+                    lista_params_p = params_pulpo[(fila-1, columna)]
 
-                    if lista_params['V'] or lista_params['S']:
+                    if linea[columna] == 0:
+                           # Los cuadros son ligeramente más pequeños para dar el efecto de la cuadricula.
+                           pygame.draw.rect(pantalla, mountains, [j, i, 38, 38], 0)
+                    elif linea[columna] == 1:
+                            pygame.draw.rect(pantalla, land, [j, i, 38, 38], 0)
+                    elif linea[columna] == 2:
+                            pygame.draw.rect(pantalla, water, [j, i, 38, 38], 0)
+                    elif linea[columna] == 3:
+                            pygame.draw.rect(pantalla, sand, [j, i, 38, 38], 0)
+                    elif linea[columna] == 4:
+                            pygame.draw.rect(pantalla, forest, [j, i, 38, 38], 0)
+                    elif linea[columna] == 5:
+                            pygame.draw.rect(pantalla, pantano, [j, i, 38, 38], 0)
+                    elif linea[columna] == 6:
+                            pygame.draw.rect(pantalla, nieve, [j, i, 38, 38], 0)
+                    elif linea[columna] == 7:
+                            pygame.draw.rect(pantalla, aquaP, [j, i, 38, 38], 0)
+                    elif linea[columna] == 8:
+                            pygame.draw.rect(pantalla, redP, [j, i, 38, 38], 0)
+                    elif linea[columna] == 9:
+                            pygame.draw.rect(pantalla, pinkP, [j, i, 38, 38], 0)
 
-                        if linea[columna] == 0:
-                               # Los cuadros son ligeramente más pequeños para dar el efecto de la cuadricula.
-                               pygame.draw.rect(pantalla, mountains, [j, i, 38, 38], 0)
-                        elif linea[columna] == 1:
-                                pygame.draw.rect(pantalla, land, [j, i, 38, 38], 0)
-                        elif linea[columna] == 2:
-                                pygame.draw.rect(pantalla, water, [j, i, 38, 38], 0)
-                        elif linea[columna] == 3:
-                                pygame.draw.rect(pantalla, sand, [j, i, 38, 38], 0)
-                        elif linea[columna] == 4:
-                                pygame.draw.rect(pantalla, forest, [j, i, 38, 38], 0)
-                        elif linea[columna] == 5:
-                                pygame.draw.rect(pantalla, pantano, [j, i, 38, 38], 0)
-                        elif linea[columna] == 6:
-                                pygame.draw.rect(pantalla, nieve, [j, i, 38, 38], 0)
-                        elif linea[columna] == 7:
-                                pygame.draw.rect(pantalla, aquaP, [j, i, 38, 38], 0)
-                        elif linea[columna] == 8:
-                                pygame.draw.rect(pantalla, redP, [j, i, 38, 38], 0)
-                        elif linea[columna] == 9:
-                                pygame.draw.rect(pantalla, pinkP, [j, i, 38, 38], 0)
-
-
-                    else:
-                        pygame.draw.rect(pantalla, BLACK, [j, i, 38, 38], 0)
 
                     ## Se obtiene la lista de parametros para esta coordenada
             
                     
-                    if(lista_params['O']):
-                        O = Fuente.render('O('+str(lista_params['h'])+')', lista_params['O'], BLACK)
-                        pantalla.blit(O, [j+5, i+25])
-                    if(lista_params['I']):
-                        I = Fuente.render('I', lista_params['I'], BLACK)
-                        pantalla.blit(I, [j+15, i+15])
-                    if(lista_params['X']):
-                        X = Fuente.render('X', lista_params['X'], BLACK)
-                        pantalla.blit(X, [j+3, i+3])
-                    if (lista_params['F']):
-                        X = Fuente.render('F', lista_params['F'], BLACK)
+                    
+                    if(lista_params_h['X']):
+                        H = Fuente.render('H', lista_params_h['X'], BLACK)
+                        pantalla.blit(H, [j+3, i+3])
+                    if(lista_params_m['X']):
+                        M = Fuente.render('M', lista_params_m['X'], BLACK)
+                        pantalla.blit(M, [j+3, i+15])
+                    if(lista_params_p['X']):
+                        O = Fuente.render('O', lista_params_p['X'], BLACK)
+                        pantalla.blit(O, [j+3, i+27])
+                    if(lista_params_h['Obj']):
+                        X = Fuente.render('K', lista_params_h['Obj'], BLACK)
                         pantalla.blit(X, [j+15, i+15])
-                    if lista_params['X'] and lista_params['F'] and contf == 2:
+                    if(lista_params_m['Obj']):
+                        X = Fuente.render('T', lista_params_m['Obj'], BLACK)
+                        pantalla.blit(X, [j+15, i+15])
+                    if(lista_params_p['Obj']):
+                        X = Fuente.render('S', lista_params_p['Obj'], BLACK)
+                        pantalla.blit(X, [j+15, i+15])
+                    if (lista_params_h['F']):
+                        X = Fuente.render('P', lista_params_h['F'], BLACK)
+                        pantalla.blit(X, [j+15, i+15])
+                    if (lista_params_h['X'] and lista_params_h['F'] and lista_params_m['X'] 
+                    	and lista_params_m['F'] and lista_params_p['F'] and lista_params_p['X'] and contf == 2):
                         gameOver=True
                         print("Ha llegado a su objetivo!!!")
                         time.sleep(10)
-                    elif lista_params['X'] and lista_params['F']:
+                    elif (lista_params_h['X'] and lista_params_h['F'] and lista_params_m['X'] 
+                    	and lista_params_m['F'] and lista_params_p['F'] and lista_params_p['X']):
                         contf += 1
+                    if lista_params_h['X'] and lista_params_h['Obj']:
+                        objetivos_humano.pop(0)
+                        lista_params_h['Obj']=False
+                        reiniciar(params_humano,fil,col)
+
+                    if lista_params_m['X'] and lista_params_m['Obj']:
+                        objetivos_mono.pop(0)
+                        lista_params_m['Obj']=False
+                        reiniciar(params_mono,fil,col)
+                    if lista_params_p['X'] and lista_params_p['Obj']:
+                        objetivos_pulpo.pop(0)
+                        lista_params_p['Obj']=False
+                        reiniciar(params_pulpo,fil,col)
                     columna = columna+1
+
+
         
             # Texto es la imagen con la que se pintarán las coordenadas
             Texto = Fuente.render(str(T), True, BLACK)
@@ -163,10 +223,23 @@ def dibujar(parametros_iniciales):
 
         pygame.display.flip()
 
-        costo = agente.step_estrella(paramsd)
-        agente.root.imprimir_arbol()
+        humano.step_estrella(params_humano,objetivos_humano)
+        mono.step_estrella(params_mono,objetivos_mono)
+        pulpo.step_estrella(params_pulpo,objetivos_pulpo)
+        humano.root.imprimir_arbol()
+        mono.root.imprimir_arbol()
+        pulpo.root.imprimir_arbol()
         
         
-        reloj.tick(5)
+        reloj.tick(1)
     pygame.quit()
-    print("Costo acumulado: "+str(costoAcumulado))
+
+def reiniciar(parametros, fil, col):
+	for i in range(0, fil):
+		for j in range(0, col):
+			parametros[(i, j)]['V'] = False
+			parametros[(i, j)]['S'] = False
+			parametros[(i, j)]['O'] = False
+			parametros[(i, j)]['k'] = False
+			parametros[(i, j)]['n'] = False
+			parametros[(i, j)]['h'] = False
