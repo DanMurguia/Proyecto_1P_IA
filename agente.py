@@ -469,7 +469,7 @@ class Agente:
 
 
 
-    def step_estrella(self, paramsd):
+    def step_estrella(self, paramsd,lista_obj):
         nodoaux = None
         evaluacion_auxiliar=0
         paramsd[self.nodo_act.data]['V'] = True
@@ -493,6 +493,8 @@ class Agente:
                 paramsd[self.nodo_act.data]['X']=True
                 print("holo")
             print(paramsd[self.nodo_act.data],self.nodo_act.data)
+
+        
 
     def step_down(self, paramsd, matriz):
     
