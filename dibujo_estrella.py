@@ -186,30 +186,43 @@ def dibujar():
                     if(lista_params_p['Obj']):
                         X = Fuente.render('S', lista_params_p['Obj'], BLACK)
                         pantalla.blit(X, [j+15, i+15])
-                    if (lista_params_h['F']):
-                        X = Fuente.render('P', lista_params_h['F'], BLACK)
+                    if (lista_params_m['F']):
+                        X = Fuente.render('P', lista_params_m['F'], BLACK)
                         pantalla.blit(X, [j+15, i+15])
-                    if (lista_params_h['X'] and lista_params_h['F'] and lista_params_m['X'] 
-                    	and lista_params_m['F'] and lista_params_p['F'] and lista_params_p['X'] and contf == 2):
+                    if (lista_params_h['X'] and lista_params_h['F'] and lista_params_m['X'] and lista_params_m['F']
+                     and lista_params_p['F'] and lista_params_p['X'] and contf == 2): 
                         gameOver=True
+                        print("Humano")
+                        humano.recorrido_optimo()
+                        print("Mono")
+                        mono.recorrido_optimo()
+                        print("Pulpo")
+                        pulpo.recorrido_optimo()
                         print("Ha llegado a su objetivo!!!")
                         time.sleep(10)
-                    elif (lista_params_h['X'] and lista_params_h['F'] and lista_params_m['X'] 
-                    	and lista_params_m['F'] and lista_params_p['F'] and lista_params_p['X']):
+                    elif (lista_params_h['X'] and lista_params_h['F'] and lista_params_m['X'] and lista_params_m['F'] 
+                    and lista_params_p['F'] and lista_params_p['X']):   
                         contf += 1
                     if lista_params_h['X'] and lista_params_h['Obj']:
                         objetivos_humano.pop(0)
                         lista_params_h['Obj']=False
                         reiniciar(params_humano,fil,col)
+                        humano.reiniciar_lista()
+                        humano.sense_estrella(params_humano,matriz,objetivos_humano[0][0],objetivos_humano[0][1])
 
                     if lista_params_m['X'] and lista_params_m['Obj']:
                         objetivos_mono.pop(0)
                         lista_params_m['Obj']=False
                         reiniciar(params_mono,fil,col)
+                        mono.reiniciar_lista()
+                        mono.sense_estrella(params_mono,matriz,objetivos_mono[0][0],objetivos_mono[0][1])
+
                     if lista_params_p['X'] and lista_params_p['Obj']:
                         objetivos_pulpo.pop(0)
                         lista_params_p['Obj']=False
                         reiniciar(params_pulpo,fil,col)
+                        pulpo.reiniciar_lista()
+                        pulpo.sense_estrella(params_pulpo,matriz,objetivos_pulpo[0][0],objetivos_pulpo[0][1])
                     columna = columna+1
 
 
@@ -223,15 +236,21 @@ def dibujar():
 
         pygame.display.flip()
 
+        humano.ordenar_nodos()
         humano.step_estrella(params_humano,objetivos_humano)
+
+        mono.ordenar_nodos()
         mono.step_estrella(params_mono,objetivos_mono)
+
+        pulpo.ordenar_nodos()
         pulpo.step_estrella(params_pulpo,objetivos_pulpo)
-        humano.root.imprimir_arbol()
+        
+        '''humano.root.imprimir_arbol()
         mono.root.imprimir_arbol()
-        pulpo.root.imprimir_arbol()
+        pulpo.root.imprimir_arbol()'''
         
         
-        reloj.tick(1)
+        reloj.tick(100)
     pygame.quit()
 
 def reiniciar(parametros, fil, col):
